@@ -251,7 +251,7 @@ const CreateProposalPage = () => {
   function goToAllProposalPage() {
     setTimeout(() => {
       router.push(
-        (layout === LAYOUT_OPTIONS.MODERN ? '' : routes.home + layout) +
+        (layout === LAYOUT_OPTIONS.MODERN ? '' : routes.swap + layout) +
           routes.proposals
       );
     }, 800);

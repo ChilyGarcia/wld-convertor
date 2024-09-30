@@ -121,7 +121,7 @@ export default function SingleComparisonChart() {
                       pathname:
                         (layout === LAYOUT_OPTIONS.MODERN
                           ? ''
-                          : routes.home + layout) + routes.coinDetails,
+                          : routes.swap + layout) + routes.coinDetails,
                     }}
                   >
                     Bitcoin
@@ -189,7 +189,7 @@ export default function SingleComparisonChart() {
                     pathname:
                       (layout === LAYOUT_OPTIONS.MODERN
                         ? ''
-                        : routes.home + layout) + routes.coinDetails,
+                        : routes.swap + layout) + routes.coinDetails,
                   }}
                   className="cursor-pointer rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-brand dark:!bg-gray-700 dark:text-white"
                 >

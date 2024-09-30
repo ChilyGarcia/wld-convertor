@@ -24,7 +24,7 @@ export default function Logo({ className }: LogoPropTypes) {
       <AnchorLink
         href={{
           pathname:
-            routes.home + (layout === LAYOUT_OPTIONS.MODERN ? '' : layout),
+            routes.swap + (layout === LAYOUT_OPTIONS.MODERN ? '' : layout),
         }}
         className={cn('flex w-28 outline-none sm:w-32 4xl:w-36', className)}
       >

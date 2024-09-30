@@ -63,7 +63,7 @@ export function RetroHeader({ className }: { className?: string }) {
       <div className="flex h-full items-center justify-between px-4 sm:px-6 lg:px-8 3xl:px-10">
         <div className="flex items-center">
           <div
-            onClick={() => router.push(routes.home)}
+            onClick={() => router.push(routes.swap)}
             className="flex items-center xl:hidden"
           >
             <LogoIcon />
@@ -105,7 +105,7 @@ export function ClassicHeader({ className }: { className?: string }) {
       <div className="flex h-full items-center justify-between px-4 sm:px-6 lg:px-8 3xl:px-10">
         <div className="flex items-center">
           <div
-            onClick={() => router.push(routes.home)}
+            onClick={() => router.push(routes.swap)}
             className="flex items-center xl:hidden"
           >
             <LogoIcon />
@@ -147,7 +147,7 @@ export default function Header({ className }: { className?: string }) {
       <div className="flex h-full items-center justify-between px-4 sm:px-6 lg:px-8 3xl:px-10">
         <div className="flex items-center">
           <div
-            onClick={() => router.push(routes.home)}
+            onClick={() => router.push(routes.swap)}
             className="flex items-center xl:hidden"
           >
             <LogoIcon />

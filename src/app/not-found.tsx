@@ -18,15 +18,7 @@ import ClassicLayout from '@/layouts/classic/layout';
 
 const Layout = ({ children }: React.PropsWithChildren) => {
   const { layout } = useLayout();
-  if (layout === LAYOUT_OPTIONS.MINIMAL) {
-    return <MinimalLayout>{children}</MinimalLayout>;
-  }
-  if (layout === LAYOUT_OPTIONS.CLASSIC) {
-    return <ClassicLayout>{children}</ClassicLayout>;
-  }
-  if (layout === LAYOUT_OPTIONS.RETRO) {
-    return <RetroLayout>{children}</RetroLayout>;
-  }
+
   return <ModernLayout>{children}</ModernLayout>;
 };
 
@@ -57,7 +49,7 @@ const NotFoundPage = () => {
           <AnchorLink
             href={{
               pathname:
-                layout === LAYOUT_OPTIONS.MODERN ? '/' : routes.home + layout,
+                layout === LAYOUT_OPTIONS.MODERN ? '/' : routes.swap + layout,
             }}
           >
             <Button shape="rounded">Back to Home</Button>

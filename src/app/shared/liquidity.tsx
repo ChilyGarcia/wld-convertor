@@ -52,7 +52,7 @@ const LiquidityPage = () => {
           <ActiveLink
             href={{
               pathname:
-                (layout === LAYOUT_OPTIONS.MODERN ? '' : routes.home + layout) +
+                (layout === LAYOUT_OPTIONS.MODERN ? '' : routes.swap + layout) +
                 routes.liquidityPosition,
             }}
           >
@@ -68,7 +68,7 @@ const LiquidityPage = () => {
           <ActiveLink
             href={{
               pathname:
-                (layout === LAYOUT_OPTIONS.MODERN ? '' : routes.home + layout) +
+                (layout === LAYOUT_OPTIONS.MODERN ? '' : routes.swap + layout) +
                 routes.liquidityPosition,
             }}
           >

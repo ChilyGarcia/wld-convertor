@@ -32,7 +32,7 @@ const VotePage = () => {
           whileHover={{ scale: 1.015 }}
           onClick={() =>
             router.push(
-              (layout === LAYOUT_OPTIONS.MODERN ? '' : routes.home + layout) +
+              (layout === LAYOUT_OPTIONS.MODERN ? '' : routes.swap + layout) +
                 routes.proposals,
             )
           }

@@ -40,7 +40,7 @@ function ActiveNavLink({ href, title, isActive, className }: any) {
     <ActiveLink
       href={{
         pathname:
-          (layout === LAYOUT_OPTIONS.MODERN ? '' : routes.home + layout) + href,
+          (layout === LAYOUT_OPTIONS.MODERN ? '' : routes.swap + layout) + href,
       }}
       className={cn(
         'relative z-[1] inline-flex items-center px-3 py-1.5',
@@ -63,7 +63,7 @@ export default function Trade({ children }: React.PropsWithChildren<{}>) {
   const router = useRouter();
   const { layout } = useLayout();
   const pathname =
-    routes.home +
+    routes.swap +
     usePathname()
       ?.split('/')
       .slice(layout === LAYOUT_OPTIONS.MODERN ? 1 : 2)

@@ -26,7 +26,7 @@ const ProposalsPage = () => {
   function goToCreateProposalPage() {
     setTimeout(() => {
       router.push(
-        (layout === LAYOUT_OPTIONS.MODERN ? '' : routes.home + layout) +
+        (layout === LAYOUT_OPTIONS.MODERN ? '' : routes.swap + layout) +
           routes.createProposal,
       );
     }, 800);
