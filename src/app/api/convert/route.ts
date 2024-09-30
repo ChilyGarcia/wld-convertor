@@ -4,9 +4,10 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const amount = searchParams.get('amount') || '1';
+    const inverted = searchParams.get('inverted') || '0';
 
     const response = await fetch(
-      `https://wld.lol/api/v1/convert?amount=${encodeURIComponent(amount)}&inverted=1&referrals_reference=&payment_method=0`,
+      `https://wld.lol/api/v1/convert?amount=${encodeURIComponent(amount)}&inverted=${encodeURIComponent(inverted)}&referrals_reference=&payment_method=0`,
     );
 
     if (!response.ok) {

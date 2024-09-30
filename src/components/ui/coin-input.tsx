@@ -44,12 +44,14 @@ export default function CoinInput({
 
   const fetchConvert = async (data: any) => {
     try {
-      const response = await fetch('/api/convert?amount=' + data.amount);
+      const response = await fetch(
+        `/api/convert?amount=${data.amount}&inverted=${data.inverted}`,
+      );
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const result = await response.json();
-      return result.response; 
+      return result.response;
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
       return null;
@@ -57,31 +59,59 @@ export default function CoinInput({
   };
 
   const handleOnChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = event.target.value;
+    let inputValue = event.target.value;
 
     if (inputValue.match(decimalPattern)) {
       setValue(inputValue);
-
-      const body = { amount: parseInt(inputValue, 10) };
-      const response = await fetchConvert(body);
 
       let param = { coin: selectedCoin.code, value: inputValue };
       getCoinValue && getCoinValue(param);
 
       if (typeof type === 'string') {
-        const inputElement = document.getElementById(
-          'receive',
-        ) as HTMLInputElement;
-        if (inputElement) {
-          const data = { newValue: response ? response.value : 0 };
-          inputElement.value = data.newValue;
+        let body, response, formattedValue;
+
+        if (inputValue.trim() === '') {
+          inputValue = '0';
+        }
+
+        if (type === 'send') {
+          body = { amount: parseFloat(inputValue), inverted: 1 };
+          response = await fetchConvert(body);
+
+          const inputElement = document.getElementById(
+            'receive',
+          ) as HTMLInputElement;
+
+          if (inputElement && response) {
+            formattedValue = parseFloat(response.converted).toLocaleString(
+              'en-US',
+              {
+                minimumFractionDigits: 2,
+              },
+            );
+            inputElement.value = formattedValue;
+          }
+        } else if (type === 'receive') {
+          body = { amount: parseFloat(inputValue), inverted: 0 };
+          response = await fetchConvert(body);
+
+          const inputElement = document.getElementById(
+            'send',
+          ) as HTMLInputElement;
+
+          if (inputElement && response) {
+            formattedValue = parseFloat(response.converted).toLocaleString(
+              'en-US',
+              {
+                minimumFractionDigits: 2,
+              },
+            );
+            inputElement.value = formattedValue;
+          }
         }
       }
 
-      console.log(
-        'Este es el input que se está alterando: ',
-        getCoinValue(param),
-      );
+      console.log('Este es el input que se está alterando: ', type);
     }
   };
 
