@@ -30,6 +30,7 @@ export default function CoinInput({
   defaultCoinIndex = 0,
   exchangeRate,
   className,
+  type,
   ...rest
 }: CoinInputTypes) {
   let [value, setValue] = useState('');
@@ -40,13 +41,50 @@ export default function CoinInput({
     setVisibleCoinList(false);
   });
   useLockBodyScroll(visibleCoinList);
-  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.match(decimalPattern)) {
-      setValue(event.target.value);
-      let param = { coin: selectedCoin.code, value: event.target.value };
-      getCoinValue && getCoinValue(param);
+
+  const fetchConvert = async (data: any) => {
+    try {
+      const response = await fetch('/api/convert?amount=' + data.amount);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const result = await response.json();
+      return result.response; 
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+      return null;
     }
   };
+
+  const handleOnChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value;
+
+    if (inputValue.match(decimalPattern)) {
+      setValue(inputValue);
+
+      const body = { amount: parseInt(inputValue, 10) };
+      const response = await fetchConvert(body);
+
+      let param = { coin: selectedCoin.code, value: inputValue };
+      getCoinValue && getCoinValue(param);
+
+      if (typeof type === 'string') {
+        const inputElement = document.getElementById(
+          'receive',
+        ) as HTMLInputElement;
+        if (inputElement) {
+          const data = { newValue: response ? response.value : 0 };
+          inputElement.value = data.newValue;
+        }
+      }
+
+      console.log(
+        'Este es el input que se está alterando: ',
+        getCoinValue(param),
+      );
+    }
+  };
+
   function handleSelectedCoin(coin: CoinTypes) {
     setSelectedCoin(coin);
     setVisibleCoinList(false);
@@ -74,6 +112,7 @@ export default function CoinInput({
         </div>
         <div className="flex flex-1 flex-col text-right">
           <input
+            id={type}
             type="text"
             value={value}
             placeholder="0.0"

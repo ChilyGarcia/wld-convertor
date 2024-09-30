@@ -195,6 +195,7 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
                     label={'Envias'}
                     exchangeRate={0.0}
                     defaultCoinIndex={0}
+                    type="send"
                     getCoinValue={(data) =>
                       console.log('From coin value:', data)
                     }
@@ -215,6 +216,7 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
                     exchangeRate={0.0}
                     defaultCoinIndex={1}
                     getCoinValue={(data) => console.log('To coin value:', data)}
+                    type="receive"
                   />
                 </div>
               </div>
