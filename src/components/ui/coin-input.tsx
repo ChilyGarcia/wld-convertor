@@ -66,9 +66,6 @@ export default function CoinInput({
       if (response) {
         const formattedValue = parseFloat(response.converted).toLocaleString(
           'en-US',
-          {
-            minimumFractionDigits: 6,
-          },
         );
         const receiveElement = document.getElementById(
           'receive',
@@ -113,9 +110,6 @@ export default function CoinInput({
           if (inputElement && response) {
             formattedValue = parseFloat(response.converted).toLocaleString(
               'en-US',
-              {
-                minimumFractionDigits: 6,
-              },
             );
             inputElement.value = formattedValue;
           }
@@ -130,9 +124,6 @@ export default function CoinInput({
           if (inputElement && response) {
             formattedValue = parseFloat(response.converted).toLocaleString(
               'en-US',
-              {
-                minimumFractionDigits: 6,
-              },
             );
             inputElement.value = formattedValue;
           }
