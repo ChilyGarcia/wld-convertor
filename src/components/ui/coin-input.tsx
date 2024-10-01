@@ -1,7 +1,7 @@
 'use client';
 
 import type { CoinTypes } from '@/types';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 import cn from '@/utils/cn';
@@ -58,6 +58,34 @@ export default function CoinInput({
     }
   };
 
+  useEffect(() => {
+    const initialValue = async () => {
+      const body = { amount: 1, inverted: 1 };
+      const response = await fetchConvert(body);
+
+      if (response) {
+        const formattedValue = parseFloat(response.converted).toLocaleString(
+          'en-US',
+          {
+            minimumFractionDigits: 6,
+          },
+        );
+        const receiveElement = document.getElementById(
+          'receive',
+        ) as HTMLInputElement;
+        if (receiveElement) {
+          receiveElement.value = formattedValue;
+        }
+      }
+    };
+
+    if (type == 'send') {
+      setValue('1');
+
+      initialValue();
+    }
+  }, []);
+
   const handleOnChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     let inputValue = event.target.value;
 
@@ -86,7 +114,7 @@ export default function CoinInput({
             formattedValue = parseFloat(response.converted).toLocaleString(
               'en-US',
               {
-                minimumFractionDigits: 2,
+                minimumFractionDigits: 6,
               },
             );
             inputElement.value = formattedValue;
@@ -103,7 +131,7 @@ export default function CoinInput({
             formattedValue = parseFloat(response.converted).toLocaleString(
               'en-US',
               {
-                minimumFractionDigits: 2,
+                minimumFractionDigits: 6,
               },
             );
             inputElement.value = formattedValue;
@@ -140,7 +168,7 @@ export default function CoinInput({
             {/* <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" /> */}
           </button>
         </div>
-        <div className="flex flex-1 flex-col text-right">
+        <div className="flex flex-1 text-right">
           <input
             id={type}
             type="text"
@@ -151,9 +179,6 @@ export default function CoinInput({
             className="w-full rounded-br-lg rounded-tr-lg border-0 pb-0.5 text-right text-lg outline-none focus:ring-0 dark:bg-light-dark"
             {...rest}
           />
-          <span className="font-xs px-3 text-gray-400">
-            = ${exchangeRate ? exchangeRate : '0.00'}
-          </span>
         </div>
       </div>
     </>

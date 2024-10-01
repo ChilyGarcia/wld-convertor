@@ -537,7 +537,7 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
           <>
             <div className="flex w-full items-center justify-center">
               <button onClick={prevStep} disabled={currentStep === 1}>
-                Atras
+                Atrás
               </button>
             </div>
           </>

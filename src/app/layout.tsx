@@ -18,7 +18,7 @@ import '@/assets/css/globals.css';
 import '@/assets/css/range-slider.css';
 
 export const metadata: Metadata = {
-  title: 'Criptic',
+  title: 'Wld.lol',
   description: 'Criptic - React Next Web3 NFT Crypto Dashboard Template',
   icons: {
     icon: {
