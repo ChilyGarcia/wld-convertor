@@ -98,6 +98,9 @@ importers:
       pino-pretty:
         specifier: ^11.0.0
         version: 11.0.0
+      qrcode.react:
+        specifier: ^4.0.1
+        version: 4.0.1(react@18.2.0)
       rc-slider:
         specifier: ^10.5.0
         version: 10.5.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -4748,6 +4751,11 @@ packages:
   qrcode-terminal-nooctal@0.12.1:
     resolution: {integrity: sha512-jy/kkD0iIMDjTucB+5T6KBsnirlhegDH47vHgrj5MejchSQmi/EAMM0xMFeePgV9CJkkAapNakpVUWYgHvtdKg==}
     hasBin: true
+
+  qrcode.react@4.0.1:
+    resolution: {integrity: sha512-Lpj0tPBn561WiQ3QQWXbkx8xTtB8BZkJeMZWLJIL8iaPBCoWzW1IpCeU3gY5MDqsb0+efCvEGkl9O0naP64crA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
 
   qrcode@1.5.3:
     resolution: {integrity: sha512-puyri6ApkEHYiVl4CFzo1tDkAZ+ATcnbJrJ6RiBM1Fhctdn/ix9MTE3hRph33omisEbC/2fcfemsseiKgBPKZg==}
@@ -11577,6 +11585,10 @@ snapshots:
   qrcode-generator@1.4.4: {}
 
   qrcode-terminal-nooctal@0.12.1: {}
+
+  qrcode.react@4.0.1(react@18.2.0):
+    dependencies:
+      react: 18.2.0
 
   qrcode@1.5.3:
     dependencies:

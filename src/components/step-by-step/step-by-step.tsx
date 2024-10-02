@@ -332,7 +332,7 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
               <input
                 id="referal_code"
                 type="text"
-                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4"
               />
               <label
                 htmlFor="document_number"
@@ -343,7 +343,7 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
               <input
                 id="document_number"
                 type="text"
-                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4"
                 onKeyDown={handleTabDown}
                 onChange={handleChange}
                 value={body.document_number}
@@ -355,7 +355,7 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
               <input
                 id="full_name"
                 type="text"
-                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4"
                 onChange={handleChange}
                 value={body.full_name}
               />
@@ -365,7 +365,7 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
               <input
                 id="email"
                 type="email"
-                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4"
                 onChange={handleChange}
                 value={body.email}
               />
@@ -378,7 +378,7 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
               <input
                 id="phone_number"
                 type="text"
-                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4"
                 onChange={handleChange}
                 value={body.phone_number}
               />
