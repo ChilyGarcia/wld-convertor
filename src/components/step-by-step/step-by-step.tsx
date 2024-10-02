@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Fragment } from 'react';
 import Button from '@/components/ui/button';
 import CoinInput from '@/components/ui/coin-input';
@@ -49,6 +49,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
     payment_method: data.payment_methods[0][0],
     account_type: '',
     account_number: '',
+    send: '',
+    receive: '',
   });
 
   const nextStep = () => {
@@ -139,11 +141,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
     };
 
     useEffect(() => {
-      console.log(
-        'Esta es la informacion de metodo de pago: ',
-        data.payment_methods[0],
-      );
-    }, []);
+      console.log(body);
+    }, [body]);
 
     switch (currentStep) {
       case 1:
@@ -211,13 +210,6 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
                       <SwapIcon className="h-auto w-3" />
                     </Button> */}
                   </div>
-                  <CoinInput
-                    label={'Recibes'}
-                    exchangeRate={0.0}
-                    defaultCoinIndex={1}
-                    getCoinValue={(data) => console.log('To coin value:', data)}
-                    type="receive"
-                  />
                 </div>
               </div>
 

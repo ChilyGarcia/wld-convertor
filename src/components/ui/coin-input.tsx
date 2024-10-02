@@ -9,6 +9,8 @@ import { ChevronDown } from '@/components/icons/chevron-down';
 import { useClickAway } from '@/lib/hooks/use-click-away';
 import { useLockBodyScroll } from '@/lib/hooks/use-lock-body-scroll';
 import { coinList } from '@/data/static/coin-list';
+import { set } from 'date-fns';
+import { Colombia } from '../icons/colombia';
 // dynamic import
 const CoinSelectView = dynamic(
   () => import('@/components/ui/coin-select-view'),
@@ -33,7 +35,9 @@ export default function CoinInput({
   type,
   ...rest
 }: CoinInputTypes) {
-  let [value, setValue] = useState('');
+  let [sendValue, setSendValue] = useState('');
+  let [receiveValue, setReceiveValue] = useState('');
+
   let [selectedCoin, setSelectedCoin] = useState(coinList[defaultCoinIndex]);
   let [visibleCoinList, setVisibleCoinList] = useState(false);
   const modalContainerRef = useRef<HTMLDivElement>(null);
@@ -77,67 +81,95 @@ export default function CoinInput({
     };
 
     if (type == 'send') {
-      setValue('1');
+      setSendValue('1');
 
       initialValue();
     }
   }, []);
 
-  const handleOnChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    let inputValue = event.target.value;
+  // useEffect(() => {
+  //   const initialValue = async () => {
+  //     const body = { amount: 1, inverted: 1 };
+  //     const response = await fetchConvert(body);
+
+  //     if (response) {
+  //       const formattedValue = parseFloat(response.converted).toLocaleString(
+  //         'en-US',
+  //       );
+  //       const receiveElement = document.getElementById(
+  //         'receive',
+  //       ) as HTMLInputElement;
+  //       if (receiveElement) {
+  //         receiveElement.value = formattedValue;
+  //       }
+  //     }
+  //   };
+
+  //   if (type == 'send') {
+  //     setValue('1');
+
+  //     initialValue();
+  //   }
+  // }, []);
+
+  const handleSendChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    let inputValue = event.target.value.replace(/,/g, '');
 
     if (inputValue.match(decimalPattern)) {
-      setValue(inputValue);
+      setSendValue(inputValue);
 
-      let param = { coin: selectedCoin.code, value: inputValue };
-      getCoinValue && getCoinValue(param);
+      let body, response;
 
-      if (typeof type === 'string') {
-        let body, response, formattedValue;
-
-        if (inputValue.trim() === '') {
-          inputValue = '0';
-        }
-
-        if (type === 'send') {
-          body = { amount: parseFloat(inputValue), inverted: 1 };
-          response = await fetchConvert(body);
-
-          const inputElement = document.getElementById(
-            'receive',
-          ) as HTMLInputElement;
-
-          if (inputElement && response) {
-            formattedValue = parseFloat(response.converted).toLocaleString(
-              'en-US',
-            );
-            inputElement.value = formattedValue;
-          }
-        } else if (type === 'receive') {
-          body = { amount: parseFloat(inputValue), inverted: 0 };
-          response = await fetchConvert(body);
-
-          const inputElement = document.getElementById(
-            'send',
-          ) as HTMLInputElement;
-
-          if (inputElement && response) {
-            formattedValue = parseFloat(response.converted).toLocaleString(
-              'en-US',
-            );
-            inputElement.value = formattedValue;
-          }
-        }
+      if (inputValue.trim() === '') {
+        inputValue = '0';
       }
 
-      console.log('Este es el input que se está alterando: ', type);
+      body = { amount: parseFloat(inputValue), inverted: 1 };
+      response = await fetchConvert(body);
+
+      const inputElement = document.getElementById(
+        'receive',
+      ) as HTMLInputElement;
+
+      if (inputElement && response) {
+        inputElement.value = parseFloat(response.converted).toLocaleString(
+          'en-US',
+        );
+      }
+
+      setReceiveValue(parseFloat(response.converted).toLocaleString('en-US'));
     }
   };
 
-  function handleSelectedCoin(coin: CoinTypes) {
-    setSelectedCoin(coin);
-    setVisibleCoinList(false);
-  }
+  const handleReceiveChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    let inputValue = event.target.value.replace(/,/g, ''); // Eliminar comas al formatear
+
+    const formattedValue = parseFloat(inputValue).toLocaleString('en-US');
+    setReceiveValue(formattedValue);
+
+    let body, response;
+
+    if (inputValue.trim() === '') {
+      inputValue = '0';
+      setReceiveValue('0');
+    }
+
+    body = { amount: parseFloat(inputValue), inverted: 0 };
+    response = await fetchConvert(body);
+
+    const inputElement = document.getElementById('send') as HTMLInputElement;
+
+    if (inputElement && response) {
+      inputElement.value = response.converted;
+    }
+
+    setSendValue(response.converted);
+  };
+
   return (
     <>
       <div
@@ -148,7 +180,7 @@ export default function CoinInput({
       >
         <div className="min-w-[80px] border-r border-gray-200 p-3 transition-colors duration-200 group-hover:border-gray-900 dark:border-gray-700 dark:group-hover:border-gray-600">
           <span className="mb-1.5 block text-xs uppercase text-gray-600 dark:text-gray-400">
-            {label}
+            Envias
           </span>
           <button
             onClick={() => setVisibleCoinList(true)}
@@ -161,12 +193,45 @@ export default function CoinInput({
         </div>
         <div className="flex flex-1 text-right">
           <input
-            id={type}
+            id="send"
             type="text"
-            value={value}
+            value={sendValue}
             placeholder="0.0"
             inputMode="decimal"
-            onChange={handleOnChange}
+            onChange={handleSendChange}
+            className="w-full rounded-br-lg rounded-tr-lg border-0 pb-0.5 text-right text-lg outline-none focus:ring-0 dark:bg-light-dark"
+            {...rest}
+          />
+        </div>
+      </div>
+
+      <div
+        className={cn(
+          'group flex min-h-[70px] rounded-lg border border-gray-200 transition-colors duration-200 hover:border-gray-900 dark:border-gray-700 dark:hover:border-gray-600',
+          className,
+        )}
+      >
+        <div className="min-w-[80px] border-r border-gray-200 p-3 transition-colors duration-200 group-hover:border-gray-900 dark:border-gray-700 dark:group-hover:border-gray-600">
+          <span className="mb-1.5 block text-xs uppercase text-gray-600 dark:text-gray-400">
+            Recibes
+          </span>
+          <button
+            onClick={() => setVisibleCoinList(true)}
+            className="flex items-center font-medium outline-none dark:text-gray-100"
+          >
+            <Colombia></Colombia>
+            <span className="ltr:ml-2 rtl:mr-2">COP </span>
+            {/* <ChevronDown className="ltr:ml-1.5 rtl:mr-1.5" /> */}
+          </button>
+        </div>
+        <div className="flex flex-1 text-right">
+          <input
+            id="receive"
+            type="text"
+            value={receiveValue}
+            placeholder="0.0"
+            inputMode="decimal"
+            onChange={handleReceiveChange}
             className="w-full rounded-br-lg rounded-tr-lg border-0 pb-0.5 text-right text-lg outline-none focus:ring-0 dark:bg-light-dark"
             {...rest}
           />
