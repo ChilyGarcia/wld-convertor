@@ -13,6 +13,7 @@ import { useLayout } from '@/lib/hooks/use-layout';
 import { Transition } from '@/components/ui/transition';
 import Checkbox from '@/components/ui/forms/checkbox';
 import { Configuration } from '@/interfaces/configuration.interface';
+import axios from 'axios';
 
 interface RegistrationFormProps {
   data: Configuration;
@@ -41,23 +42,119 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 2;
   const [body, setBody] = useState({
-    full_name: '',
-    referal_code: '',
-    document_number: '',
-    email: '',
-    phone_number: '',
     payment_method: data.payment_methods[0][0],
-    account_type: '',
-    account_number: '',
-    send: '',
-    receive: '',
   });
+
+  const [orderBody, setOrderBody] = useState({
+    amount: 0,
+    bank: '',
+    bank_account: '',
+    customer_document_number: '',
+    customer_email: '',
+    customer_full_name: '',
+    customer_phone_number: '',
+    inverted: '',
+    referrals_reference: '',
+    // bank_type: '',
+  });
+
+  const [responseOrder, setResponseOrder] = useState({
+    data: null,
+  });
+
+  const converterValue = (convertBody: any) => {
+    if (convertBody.inverted == 1) {
+      setOrderBody((prevBody) => ({
+        ...prevBody,
+        amount: convertBody.send,
+        inverted: convertBody.inverted,
+      }));
+    } else {
+      setOrderBody((prevBody) => ({
+        ...prevBody,
+        amount: convertBody.receive,
+        inverted: convertBody.inverted,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    console.log('Este es el body que se enviara: ', orderBody);
+  }, [orderBody]);
 
   const nextStep = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     }
   };
+
+  const fetchData = async () => {
+    const bodyPrueba = {
+      amount: orderBody.amount,
+      bank: orderBody.bank,
+      bank_account: orderBody.bank_account,
+      customer_document_number: orderBody.customer_document_number,
+      customer_email: orderBody.customer_email,
+      customer_full_name: orderBody.customer_full_name,
+      customer_phone_number: orderBody.customer_phone_number,
+      inverted: orderBody.inverted,
+    };
+
+    // try {
+    //   const response = await axios.post(
+    //     'https://ecuwld.com/api/v1/store',
+    //     bodyPrueba,
+    //   );
+    //   setResponseOrder({ data: response.data });
+
+    //   return response;
+    //   console.log('Response:', response.data);
+    // } catch (error) {
+    //   console.error('Error:', error);
+    // }
+
+    try {
+      const response = await fetch('api/store', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bodyPrueba),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log(data.data);
+      return data;
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+      return null;
+    }
+  };
+
+  const qrPage = async () => {
+    try {
+      const order = await fetchData();
+      setResponseOrder(order);
+
+      if (order && order.data) {
+        const orderUuid = order.data.uuid;
+        const redirectUrl = `/qr/${orderUuid}`;
+        console.log('Redirigiendo a:', redirectUrl);
+        window.location.assign(redirectUrl);
+      } else {
+        console.error('La orden es nula o no tiene datos.');
+        window.location.assign('/error');
+      }
+    } catch (error) {
+      console.error('Error al obtener la orden:', error);
+    }
+  };
+
+  useEffect(() => {}, [currentStep]);
 
   const prevStep = () => {
     if (currentStep > 1) {
@@ -75,6 +172,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
 
     const handleSelectChange = (selectedValue) => {
       setSelectedItem(selectedValue);
+
+      setOrderBody((prevBody) => ({
+        ...prevBody,
+        bank: selectedValue[1],
+      }));
+
       setBody((prevBody) => ({
         ...prevBody,
         payment_method: selectedValue[0],
@@ -83,6 +186,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
 
     const handleTypeAccountChange = (selectedValue) => {
       setSelectedTypeAccount(selectedValue);
+
+      setOrderBody((prevBody) => ({
+        ...prevBody,
+        bank_type: selectedValue[0],
+      }));
+
       setBody((prevBody) => ({
         ...prevBody,
         account_type: selectedValue[0],
@@ -90,6 +199,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
     };
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const { id, value } = event.target;
+
+      setOrderBody((prevBody) => ({ ...prevBody, [id]: value }));
+
       setBody((prevBody) => ({
         ...prevBody,
         [id]: value,
@@ -140,10 +252,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
       }
     };
 
-    useEffect(() => {
-      console.log(body);
-    }, [body]);
-
     switch (currentStep) {
       case 1:
         return (
@@ -191,6 +299,7 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
                   )}
                 >
                   <CoinInput
+                    converterBody={converterValue}
                     label={'Envias'}
                     exchangeRate={0.0}
                     defaultCoinIndex={0}
@@ -324,63 +433,71 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
 
             <div className="flex flex-col space-y-1">
               <label
-                htmlFor="referal_code"
+                htmlFor="referrals_reference"
                 className="mb-0.5 text-sm font-normal"
               >
                 Código de referido
               </label>
               <input
-                id="referal_code"
+                id="referrals_reference"
                 type="text"
-                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4"
+                className="mt-4 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={handleChange}
+                value={orderBody.referrals_reference}
               />
               <label
-                htmlFor="document_number"
+                htmlFor="customer_document_number"
                 className="mb-0.5 text-sm font-normal"
               >
                 Número de documento
               </label>
               <input
-                id="document_number"
+                id="customer_document_number"
                 type="text"
-                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4"
+                className="mt-4 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onKeyDown={handleTabDown}
                 onChange={handleChange}
-                value={body.document_number}
+                value={orderBody.customer_document_number}
               />
 
-              <label htmlFor="full_name" className="mb-0.5 text-sm font-normal">
+              <label
+                htmlFor="customer_full_name"
+                className="mb-0.5 text-sm font-normal"
+              >
                 Nombre
               </label>
               <input
-                id="full_name"
+                id="customer_full_name"
                 type="text"
-                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4"
+                className="mt-4 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onChange={handleChange}
-                value={body.full_name}
+                value={orderBody.customer_full_name}
               />
-              <label htmlFor="email" className="mb-0.5 text-sm font-normal">
+              <label
+                htmlFor="customer_email"
+                className="mb-0.5 text-sm font-normal"
+              >
                 Correo electrónico
               </label>
               <input
-                id="email"
+                id="customer_email"
                 type="email"
-                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4"
+                className="mt-4 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onChange={handleChange}
-                value={body.email}
+                value={orderBody.customer_email}
               />
               <label
-                htmlFor="phone_number"
+                htmlFor="customer_phone_number"
                 className="mb-0.5 text-sm font-normal"
               >
                 {data.phone_number_placeholder}
               </label>
               <input
-                id="phone_number"
+                id="customer_phone_number"
                 type="text"
-                className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4"
+                className="mt-4 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onChange={handleChange}
-                value={body.phone_number}
+                value={orderBody.customer_phone_number}
               />
               {body.payment_method != 'cash' && (
                 <>
@@ -453,15 +570,17 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
               {body.payment_method != 'cash' && (
                 <>
                   <label
-                    htmlFor="account_number"
+                    htmlFor="bank_account"
                     className="mb-0.5 text-sm font-normal"
                   >
                     {data.bank_account_label}
                   </label>
                   <input
-                    id="account_number"
+                    id="bank_account"
                     type="text"
                     className="rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={handleChange}
+                    value={orderBody.bank_account}
                   />
                 </>
               )}
@@ -500,15 +619,31 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
               />
             </div>
 
-            <Button
-              size="large"
-              shape="rounded"
-              fullWidth={true}
-              onClick={nextStep}
-              className="mt-6 uppercase xs:mt-8 xs:tracking-widest"
-            >
-              Enviar
-            </Button>
+            {currentStep === totalSteps ? (
+              <>
+                <Button
+                  size="large"
+                  shape="rounded"
+                  fullWidth={true}
+                  onClick={qrPage}
+                  className="mt-6 uppercase xs:mt-8 xs:tracking-widest"
+                >
+                  Enviar
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  size="large"
+                  shape="rounded"
+                  fullWidth={true}
+                  onClick={nextStep}
+                  className="mt-6 uppercase xs:mt-8 xs:tracking-widest"
+                >
+                  Enviar
+                </Button>
+              </>
+            )}
           </div>
         );
       case 3:

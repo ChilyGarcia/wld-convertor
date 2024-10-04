@@ -1,7 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/button';
-import { QRCodeCanvas } from 'qrcode.react'; // Importa el componente para generar el QR
+import { QRCodeCanvas } from 'qrcode.react'; 
 import { useEffect, useState, useRef } from 'react';
 
 export default function Page({ params }) {

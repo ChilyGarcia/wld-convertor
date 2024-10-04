@@ -21,6 +21,7 @@ interface CoinInputTypes extends React.InputHTMLAttributes<HTMLInputElement> {
   exchangeRate?: number;
   defaultCoinIndex?: number;
   className?: string;
+  converterBody: (data: any) => void;
   getCoinValue: (param: { coin: string; value: string }) => void;
 }
 
@@ -29,6 +30,7 @@ const decimalPattern = /^[0-9]*[.,]?[0-9]*$/;
 export default function CoinInput({
   label,
   getCoinValue,
+  converterBody,
   defaultCoinIndex = 0,
   exchangeRate,
   className,
@@ -37,6 +39,13 @@ export default function CoinInput({
 }: CoinInputTypes) {
   let [sendValue, setSendValue] = useState('');
   let [receiveValue, setReceiveValue] = useState('');
+  const [inverted, setInverted] = useState(1);
+
+  const [bodyConverted, setBodyConverted] = useState({
+    send: 0,
+    receive: 0,
+    inverted: 1,
+  });
 
   let [selectedCoin, setSelectedCoin] = useState(coinList[defaultCoinIndex]);
   let [visibleCoinList, setVisibleCoinList] = useState(false);
@@ -74,9 +83,25 @@ export default function CoinInput({
         const receiveElement = document.getElementById(
           'receive',
         ) as HTMLInputElement;
+
+        const sendElement = document.getElementById('send') as HTMLInputElement;
+
+        if (sendElement) {
+          sendElement.value = '1';
+        }
+
+        setInverted(1);
+
         if (receiveElement) {
+          setReceiveValue(formattedValue);
           receiveElement.value = formattedValue;
         }
+
+        setBodyConverted({
+          send: 1,
+          receive: parseFloat(response.converted),
+          inverted: inverted,
+        });
       }
     };
 
@@ -86,6 +111,10 @@ export default function CoinInput({
       initialValue();
     }
   }, []);
+
+  useEffect(() => {
+    converterBody(bodyConverted);
+  }, [bodyConverted]);
 
   // useEffect(() => {
   //   const initialValue = async () => {
@@ -127,6 +156,7 @@ export default function CoinInput({
       }
 
       body = { amount: parseFloat(inputValue), inverted: 1 };
+      setInverted(1);
       response = await fetchConvert(body);
 
       const inputElement = document.getElementById(
@@ -142,6 +172,16 @@ export default function CoinInput({
       setReceiveValue(parseFloat(response.converted).toLocaleString('en-US'));
     }
   };
+
+  useEffect(() => {
+    console.log(receiveValue.replace(/,/g, ''), sendValue.replace(/,/g, ''));
+
+    setBodyConverted({
+      send: parseFloat(sendValue),
+      receive: parseFloat(receiveValue.replace(/,/g, '')),
+      inverted: inverted,
+    });
+  }, [sendValue, receiveValue]);
 
   const handleReceiveChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -160,6 +200,7 @@ export default function CoinInput({
 
     body = { amount: parseFloat(inputValue), inverted: 0 };
     response = await fetchConvert(body);
+    setInverted(0);
 
     const inputElement = document.getElementById('send') as HTMLInputElement;
 

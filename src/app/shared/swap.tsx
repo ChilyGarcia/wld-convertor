@@ -1,22 +1,8 @@
 'use client';
 
-import { useState, Fragment, useEffect, use } from 'react';
-import Button from '@/components/ui/button';
-import CoinInput from '@/components/ui/coin-input';
-import TransactionInfo from '@/components/ui/transaction-info';
-import { SwapIcon } from '@/components/icons/swap-icon';
-import Trade from '@/components/ui/trade';
-import cn from '@/utils/cn';
+import { useState, useEffect } from 'react';
 import RegistrationForm from '@/components/step-by-step/step-by-step';
-
-import { Listbox } from '@/components/ui/listbox';
-import { LAYOUT_OPTIONS } from '@/lib/constants';
-import HorizontalThreeDots from '@/components/icons/horizontal-three-dots';
-import { ChevronDown } from '@/components/icons/chevron-down';
 import { useLayout } from '@/lib/hooks/use-layout';
-import { Transition } from '@/components/ui/transition';
-import { backendService } from '@/services/backend.service';
-import { Configuration } from '@/interfaces/configuration.interface';
 
 const sort = [
   { id: 1, name: 'DaviPlata' },
@@ -25,7 +11,7 @@ const sort = [
 ];
 
 const SwapPage = () => {
-  let [toggleCoin, setToggleCoin] = useState(false);
+
   const [selectedItem, setSelectedItem] = useState(sort[0]);
   const { layout } = useLayout();
 
