@@ -1,4 +1,3 @@
-// app/api/configuration/route.ts
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
@@ -10,11 +9,14 @@ export async function POST(request: Request) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body), 
+      body: JSON.stringify(body),
     });
 
     if (!res.ok) {
-      throw new Error(`Error en la API externa: ${res.statusText}`);
+      const errorData = await res.json();
+      throw new Error(
+        `Error en la API externa: ${res.statusText} - ${JSON.stringify(errorData)}`,
+      );
     }
 
     const data = await res.json();

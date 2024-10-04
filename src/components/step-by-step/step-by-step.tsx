@@ -145,7 +145,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
         window.location.assign(redirectUrl);
       } else {
         console.error('La orden es nula o no tiene datos.');
-        window.location.assign('/error');
       }
     } catch (error) {
       console.error('Error al obtener la orden:', error);
