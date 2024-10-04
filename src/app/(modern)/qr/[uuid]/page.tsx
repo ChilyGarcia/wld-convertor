@@ -1,29 +1,68 @@
 'use client';
 
 import Button from '@/components/ui/button';
-import { QRCodeCanvas } from 'qrcode.react'; 
+import { QRCodeCanvas } from 'qrcode.react';
 import { useEffect, useState, useRef } from 'react';
 
 export default function Page({ params }) {
   const [qrValue, setQrValue] = useState('');
   const textRef = useRef(null);
 
+  const [data, setData] = useState({});
+
   useEffect(() => {
-    if (params && params.id) {
-      setQrValue(params.id);
+    console.log(qrValue);
+
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/api/order-details?uuid=${qrValue}`);
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        console.log(
+          'Esta es la informacion que responde el back:',
+          data.response,
+        );
+
+        setData(data.response);
+      } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+      }
+    };
+
+    if (qrValue !== '') {
+      fetchData();
+    }
+  }, [qrValue]);
+
+  useEffect(() => {
+    if (params && params.uuid) {
+      setQrValue(params.uuid);
+    } else {
+      console.log('No hay');
     }
   }, [params]);
 
   const handleCopy = () => {
     if (textRef.current) {
       const textToCopy = textRef.current.innerText;
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        alert('Texto copiado al portapapeles');
-      }).catch((err) => {
-        console.error('Error al copiar el texto: ', err);
-      });
+      navigator.clipboard
+        .writeText(textToCopy)
+        .then(() => {
+          alert('Texto copiado al portapapeles');
+        })
+        .catch((err) => {
+          console.error('Error al copiar el texto: ', err);
+        });
     }
   };
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
     <>
@@ -61,7 +100,11 @@ export default function Page({ params }) {
               </g>
             </svg>
           </div>
-          <QRCodeCanvas value={qrValue} size={256} className="mx-auto p-8" />
+          <QRCodeCanvas
+            value={data?.address}
+            size={256}
+            className="mx-auto p-8"
+          />
           <div className="mt-4 flex w-full flex-col items-center justify-center">
             <div className="flex w-full flex-col items-center justify-center">
               <div className="flex w-full items-start justify-start">
@@ -72,7 +115,8 @@ export default function Page({ params }) {
               <div className="flex w-full overflow-hidden rounded shadow-lg">
                 <div className="overflow-x-auto px-6 pb-2 pt-4">
                   <h1 ref={textRef} className="whitespace-nowrap">
-                    0x2034lasoqp495nfjm284fgamz83jntvskw7842mng84md92m5ra712jsjfi482hk,hgusaj
+                    {data?.address ||
+                      'No address available, please wait a moment'}
                   </h1>
                 </div>
 
@@ -86,18 +130,32 @@ export default function Page({ params }) {
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke-width="1.5"
+                        strokeWidth="1.5"
                         stroke="currentColor"
                         className="size-6 cursor-pointer"
                       >
                         <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                           d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"
                         />
                       </svg>
                     </label>
                   </button>
+                </div>
+              </div>
+            </div>
+            <div className="mt-8 flex w-full flex-col items-center justify-center">
+              <div className="flex w-full items-start justify-start">
+                <label className="mb-2 text-sm font-light">
+                  Valor a enviar:
+                </label>
+              </div>
+              <div className="flex w-full overflow-hidden rounded shadow-lg">
+                <div className="overflow-x-auto px-6 pb-2 pt-4">
+                  <h1 ref={textRef} className="whitespace-nowrap">
+                    {data?.amount}
+                  </h1>
                 </div>
               </div>
             </div>

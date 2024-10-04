@@ -78,10 +78,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
     }
   };
 
-  useEffect(() => {
-    console.log('Este es el body que se enviara: ', orderBody);
-  }, [orderBody]);
-
   const nextStep = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
@@ -99,6 +95,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
       customer_phone_number: orderBody.customer_phone_number,
       inverted: orderBody.inverted,
     };
+
+    console.log(bodyPrueba);
 
     // try {
     //   const response = await axios.post(
