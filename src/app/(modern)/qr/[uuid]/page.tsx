@@ -52,7 +52,7 @@ export default function Page({ params }) {
       navigator.clipboard
         .writeText(textToCopy)
         .then(() => {
-          alert('Texto copiado al portapapeles');
+          // alert('Texto copiado al portapapeles');
         })
         .catch((err) => {
           console.error('Error al copiar el texto: ', err);
@@ -153,9 +153,7 @@ export default function Page({ params }) {
               </div>
               <div className="flex w-full overflow-hidden rounded shadow-lg">
                 <div className="overflow-x-auto px-6 pb-2 pt-4">
-                  <h1 ref={textRef} className="whitespace-nowrap">
-                    {data?.amount}
-                  </h1>
+                  <h1 className="whitespace-nowrap">{data?.amount}</h1>
                 </div>
               </div>
             </div>

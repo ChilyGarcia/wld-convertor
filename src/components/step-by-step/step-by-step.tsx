@@ -13,6 +13,7 @@ import { useLayout } from '@/lib/hooks/use-layout';
 import { Transition } from '@/components/ui/transition';
 import Checkbox from '@/components/ui/forms/checkbox';
 import { Configuration } from '@/interfaces/configuration.interface';
+import Swal from 'sweetalert2';
 import axios from 'axios';
 
 interface RegistrationFormProps {
@@ -45,9 +46,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
     payment_method: data.payment_methods[0][0],
   });
 
+  const [isParamReferral, setIsParamReferral] = useState(false);
+
   const [orderBody, setOrderBody] = useState({
     amount: 0,
-    bank: '',
+    bank: 'Efectivo',
     bank_account: '',
     customer_document_number: '',
     customer_email: '',
@@ -55,7 +58,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
     customer_phone_number: '',
     inverted: '',
     referrals_reference: '',
-    // bank_type: '',
+    bank_type: '',
   });
 
   const [responseOrder, setResponseOrder] = useState({
@@ -94,6 +97,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
       customer_full_name: orderBody.customer_full_name,
       customer_phone_number: orderBody.customer_phone_number,
       inverted: orderBody.inverted,
+      bank_type: orderBody.bank_type,
+      referrals_reference: orderBody.referrals_reference,
     };
 
     console.log(bodyPrueba);
@@ -121,6 +126,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
       });
 
       if (!response.ok) {
+        console.log(response);
         throw new Error('Network response was not ok');
       }
 
@@ -133,6 +139,25 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
     }
   };
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+
+    ref?.toUpperCase();
+    if (ref) {
+      setOrderBody((prevBody) => ({
+        ...prevBody,
+        referrals_reference: ref,
+      }));
+
+      setIsParamReferral(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log('Hay un parametro de referencia?? ', isParamReferral);
+  }, [isParamReferral]);
+
   const qrPage = async () => {
     try {
       const order = await fetchData();
@@ -144,7 +169,15 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
         console.log('Redirigiendo a:', redirectUrl);
         window.location.assign(redirectUrl);
       } else {
-        console.error('La orden es nula o no tiene datos.');
+        // Aqui vamos a manejar los errores
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al obtener la orden.',
+          footer: order.message || '',
+        });
+        console.error('La orden es nula o no tiene datos.', order.message);
       }
     } catch (error) {
       console.error('Error al obtener la orden:', error);
@@ -181,8 +214,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
       }));
     };
 
+    useEffect(() => {
+      console.log('Order body:', orderBody);
+    }, [orderBody]);
+
     const handleTypeAccountChange = (selectedValue) => {
       setSelectedTypeAccount(selectedValue);
+
+      console.log(selectedValue[0]);
 
       setOrderBody((prevBody) => ({
         ...prevBody,
@@ -428,30 +467,37 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
               </svg>
             </div>
 
-            <div className="flex flex-col space-y-1">
-              <label
-                htmlFor="referrals_reference"
-                className="mb-0.5 text-sm font-normal"
-              >
-                Código de referido
-              </label>
-              <input
-                id="referrals_reference"
-                type="text"
-                className="mt-4 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onChange={handleChange}
-                value={orderBody.referrals_reference}
-              />
+            <div className="flex flex-col space-y-3">
+              {isParamReferral ? (
+                <></>
+              ) : (
+                <>
+                  <label
+                    htmlFor="referrals_reference"
+                    className="mb-0.5 text-sm font-normal"
+                  >
+                    Código de referido
+                  </label>
+                  <input
+                    id="referrals_reference"
+                    type="text"
+                    className="mt-4 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={handleChange}
+                    value={orderBody.referrals_reference}
+                  />
+                </>
+              )}
+
               <label
                 htmlFor="customer_document_number"
-                className="mb-0.5 text-sm font-normal"
+                className="mb-2 text-sm font-normal"
               >
                 Número de documento
               </label>
               <input
                 id="customer_document_number"
                 type="text"
-                className="mt-4 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="mt-1 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onKeyDown={handleTabDown}
                 onChange={handleChange}
                 value={orderBody.customer_document_number}

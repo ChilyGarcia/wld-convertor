@@ -14,9 +14,9 @@ export async function POST(request: Request) {
 
     if (!res.ok) {
       const errorData = await res.json();
-      throw new Error(
-        `Error en la API externa: ${res.statusText} - ${JSON.stringify(errorData)}`,
-      );
+      console.log(errorData);
+
+      return NextResponse.json(errorData);
     }
 
     const data = await res.json();
