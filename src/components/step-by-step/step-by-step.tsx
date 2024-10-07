@@ -65,6 +65,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
     data: null,
   });
 
+  const [isAdult, setIsAdult] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [acceptPrivacy, setAcceptPrivacy] = useState(false);
+
+  const isButtonDisabled = !isAdult || !acceptTerms || !acceptPrivacy;
+
   const converterValue = (convertBody: any) => {
     if (convertBody.inverted == 1) {
       setOrderBody((prevBody) => ({
@@ -169,13 +175,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
         console.log('Redirigiendo a:', redirectUrl);
         window.location.assign(redirectUrl);
       } else {
-        // Aqui vamos a manejar los errores
-
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Ocurrió un error al obtener la orden.',
-          footer: order.message || '',
+          text: order.message || '',
         });
         console.error('La orden es nula o no tiene datos.', order.message);
       }
@@ -637,6 +640,8 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
                 labelClassName="ml-1.5 mt-1 text-[#4B5563] sm:text-md dark:text-gray-300 tracking-[0.5px]"
                 inputClassName="mt-0.5 focus:!ring-offset-[1px]"
                 size="sm"
+                checked={isAdult}
+                onChange={(e) => setIsAdult(e.target.checked)}
               />
             </div>
 
@@ -648,6 +653,8 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
                 labelClassName="ml-1.5 mt-1 text-[#4B5563] sm:text-md dark:text-gray-300 tracking-[0.5px]"
                 inputClassName="mt-0.5 focus:!ring-offset-[1px]"
                 size="sm"
+                checked={acceptTerms}
+                onChange={(e) => setAcceptTerms(e.target.checked)}
               />
             </div>
 
@@ -659,6 +666,8 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
                 labelClassName="ml-1.5 mt-1 text-[#4B5563] sm:text-md dark:text-gray-300 tracking-[0.5px]"
                 inputClassName="mt-0.5 focus:!ring-offset-[1px]"
                 size="sm"
+                checked={acceptPrivacy}
+                onChange={(e) => setAcceptPrivacy(e.target.checked)}
               />
             </div>
 
@@ -669,7 +678,8 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
                   shape="rounded"
                   fullWidth={true}
                   onClick={qrPage}
-                  className="mt-6 uppercase xs:mt-8 xs:tracking-widest"
+                  className={`mt-6 uppercase xs:mt-8 xs:tracking-widest ${isButtonDisabled ? 'cursor-not-allowed bg-gray-400' : ''}`}
+                  disabled={isButtonDisabled}
                 >
                   Enviar
                 </Button>
