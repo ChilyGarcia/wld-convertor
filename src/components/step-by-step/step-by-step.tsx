@@ -14,7 +14,7 @@ import { Transition } from '@/components/ui/transition';
 import Checkbox from '@/components/ui/forms/checkbox';
 import { Configuration } from '@/interfaces/configuration.interface';
 import Swal from 'sweetalert2';
-import axios from 'axios';
+import { motion } from 'framer-motion';
 
 interface RegistrationFormProps {
   data: Configuration;
@@ -46,6 +46,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
     payment_method: data.payment_methods[0][0],
   });
 
+  const [errors, setErrors] = useState({});
+
   const [isParamReferral, setIsParamReferral] = useState(false);
 
   const [orderBody, setOrderBody] = useState({
@@ -61,6 +63,22 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
     bank_type: '',
   });
 
+  const handleEmptyFields = (orderBody: any) => {
+    const {
+      referrals_reference,
+      bank_type,
+      bank_account,
+      ...fieldsToValidate
+    } = orderBody;
+
+    for (const [key, value] of Object.entries(fieldsToValidate)) {
+      if (value === '' || value === 0) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   const [responseOrder, setResponseOrder] = useState({
     data: null,
   });
@@ -69,7 +87,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
 
-  const isButtonDisabled = !isAdult || !acceptTerms || !acceptPrivacy;
+  const [isLoading, setIsLoading] = useState(false);
+
+  const isButtonDisabled =
+    !isAdult || !acceptTerms || !acceptPrivacy || !handleEmptyFields(orderBody);
 
   const converterValue = (convertBody: any) => {
     if (convertBody.inverted == 1) {
@@ -166,6 +187,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
 
   const qrPage = async () => {
     try {
+      setIsLoading(true);
       const order = await fetchData();
       setResponseOrder(order);
 
@@ -173,7 +195,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
         const orderUuid = order.data.uuid;
         const redirectUrl = `/qr/${orderUuid}`;
         console.log('Redirigiendo a:', redirectUrl);
-        window.location.assign(redirectUrl);
+        //window.location.assign(redirectUrl);
       } else {
         Swal.fire({
           icon: 'error',
@@ -184,6 +206,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
       }
     } catch (error) {
       console.error('Error al obtener la orden:', error);
+    } finally {
+      setIsLoading(false);
+      console.log('Finalizando la petición.');
     }
   };
 
@@ -218,6 +243,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
     };
 
     useEffect(() => {
+      console.log('Esta es el estado: ', isLoading);
+    }, [isLoading]);
+
+    useEffect(() => {
       console.log('Order body:', orderBody);
     }, [orderBody]);
 
@@ -241,11 +270,35 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
 
       setOrderBody((prevBody) => ({ ...prevBody, [id]: value }));
 
+      if (errors[id]) {
+        setErrors({ ...errors, [id]: '' });
+      }
+
       setBody((prevBody) => ({
         ...prevBody,
         [id]: value,
       }));
     };
+
+    const handleBlur = (e) => {
+      const { id, value } = e.target;
+      if (value === '') {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [id]: 'Este campo es requerido',
+        }));
+      } else {
+        setErrors((prevErrors) => {
+          const newErrors = { ...prevErrors };
+          delete newErrors[id];
+          return newErrors;
+        });
+      }
+    };
+
+    useEffect(() => {
+      console.log(errors);
+    }, [errors]);
 
     const handleTabDown = async (
       event: React.KeyboardEvent<HTMLInputElement>,
@@ -491,60 +544,97 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
                 </>
               )}
 
-              <label
-                htmlFor="customer_document_number"
-                className="mb-2 text-sm font-normal"
-              >
-                Número de documento
-              </label>
-              <input
-                id="customer_document_number"
-                type="text"
-                className="mt-1 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onKeyDown={handleTabDown}
-                onChange={handleChange}
-                value={orderBody.customer_document_number}
-              />
+              <div className="items-center">
+                <label
+                  htmlFor="customer_document_number"
+                  className="mb-0.5 text-sm font-normal"
+                >
+                  Número de documento
+                </label>
+                <input
+                  id="customer_document_number"
+                  type="text"
+                  className="mt-1 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onKeyDown={handleTabDown}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={orderBody.customer_document_number}
+                />
+                {errors.customer_document_number && (
+                  <span className="ml-1 text-sm text-red-500">
+                    {errors.customer_document_number}
+                  </span>
+                )}
+              </div>
 
-              <label
-                htmlFor="customer_full_name"
-                className="mb-0.5 text-sm font-normal"
-              >
-                Nombre
-              </label>
-              <input
-                id="customer_full_name"
-                type="text"
-                className="mt-4 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onChange={handleChange}
-                value={orderBody.customer_full_name}
-              />
-              <label
-                htmlFor="customer_email"
-                className="mb-0.5 text-sm font-normal"
-              >
-                Correo electrónico
-              </label>
-              <input
-                id="customer_email"
-                type="email"
-                className="mt-4 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onChange={handleChange}
-                value={orderBody.customer_email}
-              />
-              <label
-                htmlFor="customer_phone_number"
-                className="mb-0.5 text-sm font-normal"
-              >
-                {data.phone_number_placeholder}
-              </label>
-              <input
-                id="customer_phone_number"
-                type="text"
-                className="mt-4 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onChange={handleChange}
-                value={orderBody.customer_phone_number}
-              />
+              <div className="items-center">
+                <label
+                  htmlFor="customer_full_name"
+                  className="mb-0.5 text-sm font-normal"
+                >
+                  Nombre
+                </label>
+                <input
+                  id="customer_full_name"
+                  type="text"
+                  className="mt-1 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={orderBody.customer_full_name}
+                />
+
+                {errors.customer_full_name && (
+                  <span className="text-sm text-red-500">
+                    {errors.customer_full_name}
+                  </span>
+                )}
+              </div>
+
+              <div className="items-center">
+                <label
+                  htmlFor="customer_email"
+                  className="mb-0.5 text-sm font-normal"
+                >
+                  Correo electrónico
+                </label>
+                <input
+                  id="customer_email"
+                  type="email"
+                  className="mt-1 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={orderBody.customer_email}
+                />
+
+                {errors.customer_email && (
+                  <span className="text-sm text-red-500">
+                    {errors.customer_email}
+                  </span>
+                )}
+              </div>
+
+              <div className="items-center">
+                <label
+                  htmlFor="customer_phone_number"
+                  className="mb-0.5 text-sm font-normal"
+                >
+                  {data.phone_number_placeholder}
+                </label>
+                <input
+                  id="customer_phone_number"
+                  type="text"
+                  className="mt-1 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={orderBody.customer_phone_number}
+                />
+                {errors.customer_phone_number && (
+                  <span className="text-sm text-red-500">
+                    {errors.customer_phone_number}
+                  </span>
+                )}
+              </div>
+
               {body.payment_method != 'cash' && (
                 <>
                   <label
@@ -678,10 +768,27 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
                   shape="rounded"
                   fullWidth={true}
                   onClick={qrPage}
-                  className={`mt-6 uppercase xs:mt-8 xs:tracking-widest ${isButtonDisabled ? 'cursor-not-allowed bg-gray-400' : ''}`}
-                  disabled={isButtonDisabled}
+                  className={`mt-6 uppercase xs:mt-8 xs:tracking-widest ${isButtonDisabled || isLoading ? 'cursor-not-allowed bg-gray-400' : ''}`}
+                  disabled={isButtonDisabled || isLoading}
                 >
-                  Enviar
+                  {isLoading ? (
+                    <>
+                      <motion.div
+                        className="h-6 w-6 rounded-full border-4 border-white"
+                        style={{ borderTopColor: 'transparent' }}
+                        animate={{ rotate: 360 }}
+                        transition={{
+                          duration: 1,
+                          repeat: Infinity,
+                          ease: 'linear',
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <label>Enviar</label>
+                    </>
+                  )}
                 </Button>
               </>
             ) : (
