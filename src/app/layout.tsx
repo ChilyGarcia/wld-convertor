@@ -2,7 +2,6 @@ import cn from '@/utils/cn';
 import { Suspense } from 'react';
 import { fira_code } from './fonts';
 import type { Metadata } from 'next';
-import WalletProvider from './shared/wallet-provider';
 import { ThemeProvider } from '@/app/shared/theme-provider';
 import { QueryProvider } from './shared/query-client-provider';
 import ModalsContainer from '@/components/modal-views/container';
@@ -44,17 +43,15 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning>
-        <WalletProvider>
-          <QueryProvider>
-            <ThemeProvider>
-              <Suspense fallback={null}>
-                <ModalsContainer />
-                <DrawersContainer />
-              </Suspense>
-              {children}
-            </ThemeProvider>
-          </QueryProvider>
-        </WalletProvider>
+        <QueryProvider>
+          <ThemeProvider>
+            <Suspense fallback={null}>
+              <ModalsContainer />
+              <DrawersContainer />
+            </Suspense>
+            {children}
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );
