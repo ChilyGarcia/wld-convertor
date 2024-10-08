@@ -195,7 +195,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
         const orderUuid = order.data.uuid;
         const redirectUrl = `/qr/${orderUuid}`;
         console.log('Redirigiendo a:', redirectUrl);
-        //window.location.assign(redirectUrl);
+        window.location.assign(redirectUrl);
       } else {
         Swal.fire({
           icon: 'error',
