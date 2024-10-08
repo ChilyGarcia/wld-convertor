@@ -11,7 +11,6 @@ const sort = [
 ];
 
 const SwapPage = () => {
-
   const [selectedItem, setSelectedItem] = useState(sort[0]);
   const { layout } = useLayout();
 

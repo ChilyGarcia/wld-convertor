@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { Fragment } from 'react';
 import Button from '@/components/ui/button';
 import CoinInput from '@/components/ui/coin-input';
@@ -46,6 +46,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
   const [body, setBody] = useState({
     payment_method: data.payment_methods[0][0],
   });
+
+  const router = useRouter();
 
   const [errors, setErrors] = useState({});
 
@@ -196,7 +198,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ data }) => {
         const orderUuid = order.data.uuid;
         const redirectUrl = `/qr/${orderUuid}`;
         console.log('Redirigiendo a:', redirectUrl);
-        window.location.assign(redirectUrl);
+        router.push(redirectUrl);
+
+        // window.location.assign(redirectUrl);
       } else {
         Swal.fire({
           icon: 'error',

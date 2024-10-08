@@ -1,28 +1,29 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: Request) {
+const BACKEND_URL = process.env.BACKEND_URL || 'https://ecuwld.com/api/v1';
+
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const uuid = searchParams.get('uuid');
+    const uuid = request.nextUrl.searchParams.get('uuid');
+
+    if (!uuid) {
+      return NextResponse.json({ error: 'UUID is required' }, { status: 400 });
+    }
 
     console.log('UUID:', uuid);
 
-    const apiUrl = 'https://ecuwld.com/api/v1/' + uuid;
+    const apiUrl = `${BACKEND_URL}/${uuid}`;
     console.log('API URL:', apiUrl);
 
     const response = await fetch(apiUrl);
-
-    console.log('Response status:', response.status);
-    console.log('Response headers:', response.headers);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const responseBody = await response.text();
-    console.log('Response body:', responseBody);
-
-    const jsonResponse = responseBody ? JSON.parse(responseBody) : {};
+    const jsonResponse = await response.json();
 
     return NextResponse.json({
       response: jsonResponse,
