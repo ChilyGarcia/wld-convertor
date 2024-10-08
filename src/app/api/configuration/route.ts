@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const response = await fetch('https://wld.lol/api/v1/configurations').then(
-      (res) => res.json()
-    );
+    const response = await fetch(
+      process.env.BACKEND_URL + '/configurations',
+    ).then((res) => res.json());
 
     return NextResponse.json({
       data: response,

@@ -5,12 +5,12 @@ export async function POST(request: Request) {
   try {
     const body = await request.json(); 
 
-    const res = await fetch('https://wld.lol/api/v1/validate', {
+    const res = await fetch(process.env.BACKEND_URL + '/validate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body), // Enviar el cuerpo de la solicitud a la API externa
+      body: JSON.stringify(body), 
     });
 
     if (!res.ok) {

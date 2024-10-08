@@ -4,7 +4,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const res = await fetch('https://ecuwld.com/api/v1/store', {
+    const res = await fetch(process.env.BACKEND_URL + '/store', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

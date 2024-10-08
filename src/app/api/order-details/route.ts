@@ -7,7 +7,7 @@ export async function GET(request: Request) {
 
     console.log('UUID:', uuid);
 
-    const apiUrl = 'https://ecuwld.com/api/v1/' + uuid;
+    const apiUrl = process.env.BACKEND_URL + '/' + uuid;
     console.log('API URL:', apiUrl);
 
     const response = await fetch(apiUrl);
