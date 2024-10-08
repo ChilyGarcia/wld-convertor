@@ -7,8 +7,6 @@ import { ThemeProvider } from '@/app/shared/theme-provider';
 import { QueryProvider } from './shared/query-client-provider';
 import ModalsContainer from '@/components/modal-views/container';
 import DrawersContainer from '@/components/drawer-views/container';
-import SettingsButton from '@/components/settings/settings-button';
-import SettingsDrawer from '@/components/settings/settings-drawer';
 // base css file
 import 'overlayscrollbars/overlayscrollbars.css';
 import 'swiper/css';
@@ -49,8 +47,6 @@ export default function RootLayout({
         <WalletProvider>
           <QueryProvider>
             <ThemeProvider>
-              <SettingsButton />
-              <SettingsDrawer />
               <Suspense fallback={null}>
                 <ModalsContainer />
                 <DrawersContainer />
