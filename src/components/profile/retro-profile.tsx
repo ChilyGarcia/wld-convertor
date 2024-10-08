@@ -1,7 +1,6 @@
 'use client';
 
 import { useModal } from '@/components/modal-views/context';
-import AuthorInformation from '@/components/author/author-information';
 import { authorData } from '@/data/static/author';
 import ProfileTab from '@/components/profile/profile-tab';
 import { DotsIcon } from '@/components/icons/dots-icon';
@@ -90,7 +89,7 @@ export default function RetroProfile() {
       <div className="grow pb-9 pt-6 md:pb-0">
         <ProfileTab />
       </div>
-      <AuthorInformation data={authorData} />
+
     </div>
   );
 }

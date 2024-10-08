@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useCopyToClipboard } from 'react-use';
-import AuthorInformation from '@/components/author/author-information';
 import { authorData } from '@/data/static/author';
 import { Check } from '@/components/icons/check';
 import { Copy } from '@/components/icons/copy';
@@ -106,12 +105,12 @@ export default function Profile() {
             </AnchorLink>
           </div>
         </div>
-        <AuthorInformation className="hidden md:block" data={authorData} />
+
       </div>
       <div className="grow pb-9 pt-6 md:-mt-2.5 md:pb-0 md:pt-1.5 md:ltr:pl-7 md:rtl:pr-7 lg:ltr:pl-10 lg:rtl:pr-10 3xl:ltr:pl-14 3xl:rtl:pr-14">
         <ProfileTab />
       </div>
-      <AuthorInformation data={authorData} />
+
     </div>
   );
 }

@@ -2,8 +2,6 @@ import { Suspense } from 'react';
 import cn from '@/utils/cn';
 import ListCard from '@/components/ui/list-card';
 import ParamTab, { TabPanel } from '@/components/ui/param-tab';
-import TransactionSearchForm from '@/components/author/transaction-search-form';
-import TransactionHistory from '@/components/author/transaction-history';
 import CollectionCard from '@/components/ui/collection-card';
 import { useLayout } from '@/lib/hooks/use-layout';
 import { LAYOUT_OPTIONS } from '@/lib/constants';
@@ -96,8 +94,6 @@ export default function ProfileTab() {
         </TabPanel>
         <TabPanel className="focus:outline-none">
           <div className="space-y-8 xl:space-y-9">
-            <TransactionSearchForm />
-            <TransactionHistory />
           </div>
         </TabPanel>
       </ParamTab>

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useCopyToClipboard } from 'react-use';
-import AuthorInformation from '@/components/author/author-information';
 import { authorData } from '@/data/static/author';
 import { Check } from '@/components/icons/check';
 import { Copy } from '@/components/icons/copy';
