@@ -14,7 +14,6 @@ import {
 } from '@/layouts/sidebar/_menu-items';
 import { LAYOUT_OPTIONS } from '@/lib/constants';
 import { ChevronRight } from '@/components/icons/chevron-right';
-import WalletConnect from '@/components/nft/wallet-connect';
 
 const layoutOption = '';
 const minimalMenuItems = MinimalMenuItems.map((item) => ({
@@ -237,7 +236,6 @@ export default function DrawerMenu({
         </div>
       </div>
       <div className="absolute bottom-4 right-0 z-10 w-full px-6">
-        <WalletConnect anchorClassName="w-full" btnClassName="!w-full !h-11" />
       </div>
     </div>
   );
