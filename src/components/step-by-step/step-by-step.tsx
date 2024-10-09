@@ -16,6 +16,7 @@ import Checkbox from '@/components/ui/forms/checkbox';
 import { Configuration } from '@/interfaces/configuration.interface';
 import Swal from 'sweetalert2';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 interface RegistrationFormProps {
   data: Configuration;
@@ -743,7 +744,19 @@ c0 44 39 175 73 251 124 268 354 452 647 517 111 25 298 20 415 -10z m614
             <div className="mt-6 flex items-center justify-between">
               <Checkbox
                 iconClassName="bg-[#4B5563] rounded focus:!ring-0"
-                label="He leido y acepto los terminos y condiciones"
+                label={
+                  <span>
+                    He leido y acepto los{' '}
+                    <Link
+                      href="/terms-conditions"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 underline"
+                    >
+                      terminos y condiciones
+                    </Link>
+                  </span>
+                }
                 labelPlacement="end"
                 labelClassName="ml-1.5 mt-1 text-[#4B5563] sm:text-md dark:text-gray-300 tracking-[0.5px]"
                 inputClassName="mt-0.5 focus:!ring-offset-[1px]"
